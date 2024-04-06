@@ -2,7 +2,6 @@ package fr.uga.l3miage.spring.tp3.controllers;
 
 import fr.uga.l3miage.spring.tp3.components.CandidateComponent;
 import fr.uga.l3miage.spring.tp3.exceptions.CandidatNotFoundResponse;
-import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
 import fr.uga.l3miage.spring.tp3.repositories.CandidateRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -40,17 +39,18 @@ class CandidateControllerTest {
         //given
         final HttpHeaders headers = new HttpHeaders();
 
-        final Map<String, Object> urlParams = new HashMap<>();
-        urlParams.put("candidateId", "Le candidat qui n'existe pas");
+        final Map<String, Long> urlParams = new HashMap<>();
+        urlParams.put("candidateId", 100L);
 
         CandidatNotFoundResponse notFoundErrorResponseExpected = CandidatNotFoundResponse
                 .builder()
-                .uri("/api/candidates/Le%candidat%20qui%20n%27existe%20pas")
-                .errorMessage("Le candidat [Le candidat qui n'existe pas] n'a pas été trouvé")
+                .candidateId(100L)
+                .uri("/api/candidates/100/average")
+                .errorMessage("Le candidat [100] n'a pas été trouvé")
                 .build();
 
         //when
-        ResponseEntity<CandidatNotFoundResponse> response = testRestTemplate.exchange("/api/candidates/{candidateId}", HttpMethod.GET, new HttpEntity<>(null, headers), CandidatNotFoundResponse.class, urlParams);
+        ResponseEntity<CandidatNotFoundResponse> response = testRestTemplate.exchange("/api/candidates/{candidateId}/average", HttpMethod.GET, new HttpEntity<>(null, headers), CandidatNotFoundResponse.class, urlParams);
 
         //then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -58,5 +58,4 @@ class CandidateControllerTest {
                 .isEqualTo(notFoundErrorResponseExpected);
 
     }
-
 }
